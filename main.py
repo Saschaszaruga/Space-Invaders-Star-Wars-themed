@@ -1,15 +1,22 @@
+import sys
 import pygame
+import os
 import cv2
+from pygame import mixer
 
-SCREEN_WIDTH1 = 850
-SCREEN_HEIGHT1 = 478
 
 video = cv2.VideoCapture("venator.mp4")
 success, video_image = video.read()
 fps = video.get(cv2.CAP_PROP_FPS)
 
+pygame.init()
+pygame.mixer.init()
+
 window = pygame.display.set_mode(video_image.shape[1::-1])
 clock = pygame.time.Clock()
+
+mp3 = pygame.mixer.Sound("venator.mp3")
+mp3.play()
 
 run = success
 while run:
@@ -27,14 +34,38 @@ while run:
     window.blit(video_surf, (0, 0))
     pygame.display.flip()
 
+mp3.stop()
+
+
 import math
 import random
 
 import pygame
 from pygame import mixer
 
+# Define all Colors
+WHITE = (255, 255, 255)
+TRANSPARENT_BLUE = (64, 0, 255, 42)
+
+# Set the dimensions of the screen
+SCREEN_WIDTH = 850
+SCREEN_HEIGHT = 478
+
 # Intialize the pygame
 pygame.init()
+
+# Create a font object
+font = pygame.font.Font('Starwars.TTF', 36)
+
+# Create the play again button
+playag_button = font.render('Go Back to Main Menu', True, WHITE)
+playag_rect = playag_button.get_rect()
+playag_rect.centerx = SCREEN_WIDTH // 2
+playag_rect.centery = SCREEN_HEIGHT // 2 + 100
+
+playag_button_bg = pygame.Surface((playag_button.get_width() + 20, playag_button.get_height() + 10), pygame.SRCALPHA)
+playag_button_bg.fill(TRANSPARENT_BLUE)
+playag_button_bg_rect = playag_button_bg.get_rect(center=playag_rect.center)
 
 # create the screen
 screen = pygame.display.set_mode((800, 600))
@@ -63,14 +94,14 @@ enemyX = []
 enemyY = []
 enemyX_change = []
 enemyY_change = []
-num_of_enemies = 6
+num_of_enemies = 8
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('enemy.png'))
     enemyX.append(random.randint(0, 736))
     enemyY.append(random.randint(50, 150))
-    enemyX_change.append(4)
-    enemyY_change.append(40)
+    enemyX_change.append(2)
+    enemyY_change.append(20)
 
 # Bullet
 
@@ -93,7 +124,7 @@ textX = 10
 testY = 10
 
 # Game Over
-over_font = pygame.font.Font('Starwars.TTF', 64)
+over_font = pygame.font.Font('freesansbold.ttf', 64)
 
 
 def show_score(x, y):
@@ -126,7 +157,6 @@ def isCollision(enemyX, enemyY, bulletX, bulletY):
         return True
     else:
         return False
-
 
 # Game Loop
 running = True
@@ -175,17 +205,21 @@ while running:
             for j in range(num_of_enemies):
                 enemyY[j] = 2000
             game_over_text()
-            screen = pygame.display.set_mode([SCREEN_WIDTH1, SCREEN_HEIGHT1])
+            screen.blit(playag_button_bg, playag_button_bg_rect)
+            screen.blit(playag_button, playag_rect)
+            if event.type == pygame.MOUSEBUTTONDOWN and playag_button_bg_rect.collidepoint(event.pos):
+                os.execv(sys.executable, ['python'] + sys.argv)
+                main()
 
+            break
 
-
-        enemyX[i] += enemyX_change[i]
-        if enemyX[i] <= 0:
-            enemyX_change[i] = 4
-            enemyY[i] += enemyY_change[i]
-        elif enemyX[i] >= 736:
+        enemyX [i] += enemyX_change[i]
+        if enemyX [i] <= 0:
+            enemyX_change [i] = 4
+            enemyY [i] += enemyY_change[i]
+        elif enemyX [i] >= 736:
             enemyX_change[i] = -4
-            enemyY[i] += enemyY_change[i]
+            enemyY[ i] += enemyY_change[i]
 
         # Collision
         collision = isCollision(enemyX[i], enemyY[i], bulletX, bulletY)
