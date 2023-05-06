@@ -1,6 +1,15 @@
 import sys
 import pygame
+import pygame.mixer
 
+# Initialize Pygame mixer
+pygame.mixer.init()
+
+# Load the music file
+pygame.mixer.music.load("tcwextended.mp3")
+
+# Play the music file in an infinite loop
+pygame.mixer.music.play(-1)
 
 # Define some colors
 WHITE = (255, 255, 255)
@@ -23,6 +32,8 @@ pygame.display.set_caption('SPACE INVADERS')
 # Load the menu background image
 background_image1 = pygame.image.load("background1.png").convert()
 
+
+
 # Create a font object
 font = pygame.font.Font('Starwars.TTF', 36)
 
@@ -38,9 +49,6 @@ quit_rect = quit_button.get_rect()
 quit_rect.centerx = SCREEN_WIDTH // 2
 quit_rect.centery = SCREEN_HEIGHT // 2
 
-
-
-
 # Create semi-transparent surfaces for button backgrounds
 start_button_bg = pygame.Surface((start_button.get_width() + 20, start_button.get_height() + 10), pygame.SRCALPHA)
 start_button_bg.fill(TRANSPARENT_BLUE)
@@ -50,9 +58,20 @@ quit_button_bg = pygame.Surface((quit_button.get_width() + 20, quit_button.get_h
 quit_button_bg.fill(TRANSPARENT_BLUE)
 quit_button_bg_rect = quit_button_bg.get_rect(center=quit_rect.center)
 
+# Blit the buttons and backgrounds on the screen
+screen.blit(background_image1, [0, 0])
+screen.blit(start_button_bg, start_button_bg_rect)
+screen.blit(start_button, start_rect)
+screen.blit(quit_button_bg, quit_button_bg_rect)
+screen.blit(quit_button, quit_rect)
+
+
 # Create a variable to keep track of whether the game is running or not
 game_running = True
+# Create a variable to keep track of whether the sound is muted or not
+sound_muted = False
 
+# Start the game loop
 while game_running:
     # Handle events
     for event in pygame.event.get():
@@ -63,23 +82,15 @@ while game_running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             # Check if the start button was clicked
             if start_rect.collidepoint(event.pos):
+                # Stop the music
+                pygame.mixer.music.stop()
                 # Start the game here
-                if __name__ == '__main__':
-                    import main
-                    # Check if the quit button was clicked
+                import main
+            # Check if the quit button was clicked
             if quit_rect.collidepoint(event.pos):
                 # Quit the game here
                 game_running = False
 
-
-    # Draw objects here
-
-    # Blit the buttons and backgrounds on the screen
-    screen.blit(background_image1, [0, 0])
-    screen.blit(start_button_bg, start_button_bg_rect)
-    screen.blit(start_button, start_rect)
-    screen.blit(quit_button_bg, quit_button_bg_rect)
-    screen.blit(quit_button, quit_rect)
 
     # Update the screen
     pygame.display.update()
